@@ -124,6 +124,9 @@ function Plan() {
     return sp;
   }, [itinerary]);
 
+  // Build meal plan search params (same params as checklist)
+  const mealPlanSearchParams = checklistSearchParams;
+
   return (
     <main className="min-h-dvh bg-cream">
       {/* Toast notification */}
@@ -405,10 +408,17 @@ function Plan() {
                   >
                     🎒 Packing Checklist
                   </Link>
+                  <Link
+                    to="/meals"
+                    search={mealPlanSearchParams}
+                    className="flex items-center justify-center gap-2 rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-forest/20 transition-all hover:bg-forest-dark hover:shadow-md"
+                  >
+                    🍳 Meal Plan
+                  </Link>
                   <button
                     type="button"
                     onClick={handleSaveTrip}
-                    className="flex items-center justify-center gap-2 rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-forest-dark"
+                    className="flex items-center justify-center gap-2 rounded-full border border-stone-warm bg-white px-5 py-2.5 text-sm font-semibold text-bark transition-colors hover:bg-stone-warm"
                   >
                     💾 Save This Trip
                   </button>
@@ -463,6 +473,13 @@ function Plan() {
                   className="flex items-center justify-center gap-2 rounded-full bg-amber px-6 py-3 text-sm font-semibold text-white shadow-md shadow-amber/20 transition-all hover:bg-amber-dark hover:shadow-lg"
                 >
                   🎒 View Packing Checklist
+                </Link>
+                <Link
+                  to="/meals"
+                  search={mealPlanSearchParams}
+                  className="flex items-center justify-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-semibold text-white shadow-md shadow-forest/20 transition-all hover:bg-forest-dark hover:shadow-lg"
+                >
+                  🍳 View Meal Plan
                 </Link>
                 <button
                   type="button"
