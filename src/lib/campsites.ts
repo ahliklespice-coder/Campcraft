@@ -1,0 +1,348 @@
+export interface Campsite {
+  id: string;
+  name: string;
+  parkName: string;
+  state: string;
+  description: string;
+  image: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  features: string[];
+  activities: string[];
+  bestSeason: string[];
+  reservationType: 'reservable' | 'first-come' | 'permit';
+  reservationUrl?: string;
+  elevation?: number;
+  siteCount?: number;
+  priceRange: '$' | '$$' | '$$$';
+  familyFriendly: boolean;
+  petFriendly: boolean;
+  coordinates?: { lat: number; lng: number };
+}
+
+export const campsites: Campsite[] = [
+  {
+    id: 'upper-pines',
+    name: 'Upper Pines',
+    parkName: 'Yosemite National Park',
+    state: 'CA',
+    description:
+      'Nestled in the heart of Yosemite Valley with breathtaking views of Half Dome and Glacier Point. This iconic campground is perfect for first-time visitors who want easy access to paved trails, the Merced River, and Yosemite Village.',
+    image: '🏔️🌲⛰️',
+    difficulty: 'beginner',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Bear boxes', 'Picnic tables', 'Food storage lockers'],
+    activities: ['Hiking', 'Photography', 'Stargazing', 'Rock climbing', 'Biking'],
+    bestSeason: ['Spring', 'Summer', 'Fall'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232447',
+    elevation: 4000,
+    siteCount: 238,
+    priceRange: '$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 37.741, lng: -119.565 },
+  },
+  {
+    id: 'madison',
+    name: 'Madison Campground',
+    parkName: 'Yellowstone National Park',
+    state: 'WY',
+    description:
+      'Located at the confluence of the Firehole and Gibbon Rivers, Madison is a wildlife watcher\'s dream. You\'ll likely see bison and elk nearby, and the campground serves as a great base camp for exploring Old Faithful and the Grand Prismatic Spring.',
+    image: '🦬🌋💨',
+    difficulty: 'beginner',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Picnic tables', 'Ranger programs'],
+    activities: ['Hiking', 'Wildlife viewing', 'Fishing', 'Photography', 'Stargazing'],
+    bestSeason: ['Summer', 'Fall'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232499',
+    elevation: 6800,
+    siteCount: 278,
+    priceRange: '$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 44.644, lng: -110.862 },
+  },
+  {
+    id: 'elkmont',
+    name: 'Elkmont Campground',
+    parkName: 'Great Smoky Mountains National Park',
+    state: 'TN',
+    description:
+      'Tucked along the Little River, Elkmont combines lush Appalachian forest with the soothing sound of running water. It\'s one of the park\'s largest campgrounds and a favorite for families — with easy access to the popular Laurel Falls trail.',
+    image: '🌳🏞️🦌',
+    difficulty: 'beginner',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Picnic tables', 'Ranger programs'],
+    activities: ['Hiking', 'Fishing', 'Tubing', 'Wildlife viewing', 'Photography'],
+    bestSeason: ['Spring', 'Summer', 'Fall'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232487',
+    elevation: 2150,
+    siteCount: 200,
+    priceRange: '$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 35.653, lng: -83.585 },
+  },
+  {
+    id: 'watchman',
+    name: 'Watchman Campground',
+    parkName: 'Zion National Park',
+    state: 'UT',
+    description:
+      'Set along the Virgin River with towering sandstone cliffs in every direction, Watchman puts you minutes from the park visitor center and shuttle. Wake up to incredible sunrise views of the Watchman peak glowing orange at dawn.',
+    image: '🏜️🧗☀️',
+    difficulty: 'beginner',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Picnic tables', 'Electric hookups'],
+    activities: ['Hiking', 'Canyoneering', 'Photography', 'Stargazing', 'Biking'],
+    bestSeason: ['Spring', 'Fall'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232445',
+    elevation: 3900,
+    siteCount: 176,
+    priceRange: '$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 37.198, lng: -112.982 },
+  },
+  {
+    id: 'blackwoods',
+    name: 'Blackwoods Campground',
+    parkName: 'Acadia National Park',
+    state: 'ME',
+    description:
+      'Just minutes from the rugged Maine coastline and the charming town of Bar Harbor, Blackwoods offers a classic New England camping experience. Hike Cadillac Mountain — the first place to see sunrise in the US — right from your campsite.',
+    image: '🌊🌲🦞',
+    difficulty: 'intermediate',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Picnic tables', 'Showers nearby'],
+    activities: ['Hiking', 'Biking', 'Kayaking', 'Rock climbing', 'Whale watching'],
+    bestSeason: ['Summer', 'Fall'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232499',
+    elevation: 400,
+    siteCount: 281,
+    priceRange: '$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 44.314, lng: -68.206 },
+  },
+  {
+    id: 'mather',
+    name: 'Mather Campground',
+    parkName: 'Grand Canyon National Park',
+    state: 'AZ',
+    description:
+      'Camp on the South Rim of the Grand Canyon, walking distance from the rim trail and jaw-dropping views. Mather is a large, well-shaded campground with easy access to the visitor center, shuttle buses, and the iconic Bright Angel Trail.',
+    image: '🏜️🌵🌄',
+    difficulty: 'beginner',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Picnic tables', 'Showers', 'Laundry'],
+    activities: ['Hiking', 'Photography', 'Stargazing', 'Ranger programs', 'Biking'],
+    bestSeason: ['Spring', 'Summer', 'Fall'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232490',
+    elevation: 7000,
+    siteCount: 327,
+    priceRange: '$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 36.054, lng: -112.122 },
+  },
+  {
+    id: 'kalaloch',
+    name: 'Kalaloch Campground',
+    parkName: 'Olympic National Park',
+    state: 'WA',
+    description:
+      'Perched on a bluff overlooking the wild Pacific coastline, Kalaloch offers a one-of-a-kind beach camping experience. Fall asleep to crashing waves, explore tide pools, and visit the nearby Hoh Rain Forest — all in one trip.',
+    image: '🌊🌲🦦',
+    difficulty: 'beginner',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Picnic tables', 'Ranger programs'],
+    activities: ['Beachcombing', 'Hiking', 'Wildlife viewing', 'Fishing', 'Photography'],
+    bestSeason: ['Summer', 'Fall'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232465',
+    elevation: 30,
+    siteCount: 168,
+    priceRange: '$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 47.609, lng: -124.380 },
+  },
+  {
+    id: 'jumbo-rocks',
+    name: 'Jumbo Rocks Campground',
+    parkName: 'Joshua Tree National Park',
+    state: 'CA',
+    description:
+      'Surrounded by the park\'s namesake twisted Joshua trees and massive granite boulder formations, Jumbo Rocks is a dream for stargazers and rock climbers. With no light pollution, the Milky Way is visible to the naked eye on clear nights.',
+    image: '🌵🪨🌟',
+    difficulty: 'intermediate',
+    features: ['Vault toilets', 'Fire pits', 'Picnic tables'],
+    activities: ['Rock climbing', 'Stargazing', 'Hiking', 'Photography', 'Bouldering'],
+    bestSeason: ['Fall', 'Winter', 'Spring'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232459',
+    elevation: 4400,
+    siteCount: 124,
+    priceRange: '$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 33.993, lng: -116.065 },
+  },
+  {
+    id: 'moraine-park',
+    name: 'Moraine Park Campground',
+    parkName: 'Rocky Mountain National Park',
+    state: 'CO',
+    description:
+      'Set in a beautiful open meadow surrounded by towering 14,000-foot peaks, Moraine Park delivers classic Rocky Mountain camping. Elk graze nearby at dawn and dusk, and the campground is a short drive from the famous Trail Ridge Road.',
+    image: '🦌🏔️🌿',
+    difficulty: 'beginner',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Picnic tables', 'Ranger programs'],
+    activities: ['Hiking', 'Wildlife viewing', 'Fishing', 'Photography', 'Scenic drives'],
+    bestSeason: ['Summer', 'Fall'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232475',
+    elevation: 8160,
+    siteCount: 244,
+    priceRange: '$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 40.357, lng: -105.590 },
+  },
+  {
+    id: 'big-meadows',
+    name: 'Big Meadows Campground',
+    parkName: 'Shenandoah National Park',
+    state: 'VA',
+    description:
+      'Located right along Skyline Drive with sweeping Blue Ridge Mountain views, Big Meadows is the perfect introduction to Appalachian camping. The campground is within walking distance of three waterfalls and the Big Meadows visitor center.',
+    image: '🌄🦋🌳',
+    difficulty: 'beginner',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Picnic tables', 'Showers', 'Laundry'],
+    activities: ['Hiking', 'Waterfall viewing', 'Wildlife viewing', 'Photography', 'Stargazing'],
+    bestSeason: ['Spring', 'Summer', 'Fall'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232479',
+    elevation: 3500,
+    siteCount: 221,
+    priceRange: '$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 38.517, lng: -78.440 },
+  },
+  {
+    id: 'pfeiffer-big-sur',
+    name: 'Pfeiffer Big Sur State Park',
+    parkName: 'Pfeiffer Big Sur State Park',
+    state: 'CA',
+    description:
+      'Camp among towering coastal redwoods along the Big Sur River. This lush campground feels worlds away from civilization — yet it\'s just a short drive to Pfeiffer Beach, McWay Falls, and some of the most dramatic coastline in America.',
+    image: '🌲🌊🌉',
+    difficulty: 'intermediate',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Picnic tables', 'Showers', 'Camp store'],
+    activities: ['Hiking', 'Beach access', 'Photography', 'Swimming', 'Wildlife viewing'],
+    bestSeason: ['Spring', 'Summer', 'Fall'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.reservecalifornia.com/CaliforniaWebHome/',
+    elevation: 200,
+    siteCount: 189,
+    priceRange: '$$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 36.252, lng: -121.784 },
+  },
+  {
+    id: 'cedar-pass',
+    name: 'Cedar Pass Campground',
+    parkName: 'Badlands National Park',
+    state: 'SD',
+    description:
+      'Camp right at the edge of the otherworldly Badlands formations — striped buttes, towering spires, and vast prairie. Cedar Pass offers stunning sunrise and sunset views over the rock formations, plus easy access to the park\'s best hiking trails.',
+    image: '🦅🏜️🌾',
+    difficulty: 'intermediate',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Picnic tables', 'Electric hookups'],
+    activities: ['Hiking', 'Fossil viewing', 'Photography', 'Stargazing', 'Wildlife viewing'],
+    bestSeason: ['Spring', 'Fall'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232472',
+    elevation: 2500,
+    siteCount: 96,
+    priceRange: '$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 43.745, lng: -101.942 },
+  },
+  {
+    id: 'flamingo',
+    name: 'Flamingo Campground',
+    parkName: 'Everglades National Park',
+    state: 'FL',
+    description:
+      'At the southern tip of the Florida mainland, Flamingo offers a subtropical camping adventure like no other. Watch for manatees and crocodiles in the marina, kayak through mangrove tunnels, and experience one of America\'s most unique ecosystems.',
+    image: '🐊🌴🦩',
+    difficulty: 'intermediate',
+    features: ['Restrooms', 'Fire pits', 'Potable water', 'Picnic tables', 'Showers', 'Marina'],
+    activities: ['Kayaking', 'Fishing', 'Bird watching', 'Hiking', 'Boating'],
+    bestSeason: ['Winter', 'Spring'],
+    reservationType: 'reservable',
+    reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232461',
+    elevation: 3,
+    siteCount: 234,
+    priceRange: '$$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 25.140, lng: -80.939 },
+  },
+  {
+    id: 'covered-bridge',
+    name: 'Covered Bridge Campground',
+    parkName: 'White Mountain National Forest',
+    state: 'NH',
+    description:
+      'Tucked along the Kancamagus Highway beside a historic covered bridge, this small, quiet campground is a gateway to the White Mountains. Hike to stunning waterfalls, swim in the Swift River, and enjoy classic New England fall foliage.',
+    image: '🍂🏔️🌉',
+    difficulty: 'intermediate',
+    features: ['Vault toilets', 'Fire pits', 'Potable water', 'Picnic tables'],
+    activities: ['Hiking', 'Swimming', 'Fishing', 'Scenic drives', 'Photography'],
+    bestSeason: ['Summer', 'Fall'],
+    reservationType: 'first-come',
+    elevation: 1400,
+    siteCount: 49,
+    priceRange: '$',
+    familyFriendly: true,
+    petFriendly: true,
+    coordinates: { lat: 43.980, lng: -71.354 },
+  },
+];
+
+export function getCampsiteById(id: string): Campsite | undefined {
+  return campsites.find((c) => c.id === id);
+}
+
+export function getStates(): string[] {
+  return [...new Set(campsites.map((c) => c.state))].sort();
+}
+
+export type Region = 'West' | 'Mountain' | 'Midwest' | 'South' | 'Northeast';
+
+export const stateRegionMap: Record<string, Region> = {
+  CA: 'West',
+  WA: 'West',
+  OR: 'West',
+  WY: 'Mountain',
+  CO: 'Mountain',
+  UT: 'Mountain',
+  MT: 'Mountain',
+  ID: 'Mountain',
+  SD: 'Midwest',
+  TN: 'South',
+  FL: 'South',
+  VA: 'South',
+  AZ: 'West',
+  ME: 'Northeast',
+  NH: 'Northeast',
+};
+
+export function getRegion(state: string): Region {
+  return stateRegionMap[state] || 'West';
+}

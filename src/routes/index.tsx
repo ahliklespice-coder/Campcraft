@@ -123,6 +123,34 @@ function Home() {
         </div>
       </section>
 
+      {/* Discover CTA Card */}
+      <section className="bg-cream px-4 py-12 sm:px-6">
+        <div className="mx-auto max-w-3xl">
+          <div className="overflow-hidden rounded-2xl border-2 border-amber/30 bg-gradient-to-br from-forest to-forest-dark p-8 shadow-lg sm:p-10">
+            <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
+              <div className="flex-shrink-0 text-5xl sm:text-6xl">🏕️</div>
+              <div className="text-center sm:text-left">
+                <h3 className="mb-2 text-2xl font-bold text-white sm:text-3xl">
+                  Discover Your Perfect Campsite
+                </h3>
+                <p className="mb-5 text-white/80">
+                  Browse our curated collection of 14 incredible campgrounds
+                  across the US. Filter by difficulty, region, features, and
+                  price to find the spot that's right for you.
+                </p>
+                <Link
+                  to="/discover"
+                  className="inline-flex items-center gap-2 rounded-full bg-amber px-6 py-3 text-sm font-semibold text-white shadow-md shadow-amber/30 no-underline transition-all hover:bg-amber-dark"
+                >
+                  Explore Campsites
+                  <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Who It's For Section */}
       <section className="bg-stone-warm px-4 py-20 sm:px-6 sm:py-28">
         <div className="mx-auto max-w-3xl text-center">
