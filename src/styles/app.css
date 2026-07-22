@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-forest: #2D5A27;
+  --color-forest-dark: #1E3A1A;
+  --color-forest-light: #3A7D33;
+  --color-amber: #E8923F;
+  --color-amber-dark: #D47A2A;
+  --color-amber-light: #F0A95D;
+  --color-cream: #FAF7F2;
+  --color-stone-warm: #F5F0EB;
+  --color-bark: #4A3728;
+  --color-bark-light: #6B5544;
+}
+
+@layer base {
+  html,
+  body {
+    @apply bg-cream text-bark antialiased;
+  }
+}
