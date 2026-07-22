@@ -1,7 +1,7 @@
 "use client";
 
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, useCallback, useRef, useEffect } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import {
   generateItinerary,
   formatExperienceLevel,
@@ -109,6 +109,20 @@ function Plan() {
   const handleSaveTrip = useCallback(() => {
     setToast("✨ Trip saved! (Persistence coming soon — your itinerary is safe on this page for now.)");
   }, []);
+
+  // Build checklist search params from the generated itinerary
+  const checklistSearchParams = useMemo((): Record<string, string> | undefined => {
+    if (!itinerary) return undefined;
+    const sp: Record<string, string> = {
+      destination: itinerary.destination,
+      adults: String(itinerary.adults),
+      children: String(itinerary.children),
+      experienceLevel: itinerary.experienceLevel,
+      totalDays: String(itinerary.totalDays),
+    };
+    if (itinerary.tripStyle) sp.tripStyle = itinerary.tripStyle;
+    return sp;
+  }, [itinerary]);
 
   return (
     <main className="min-h-dvh bg-cream">
@@ -383,13 +397,22 @@ function Plan() {
                 >
                   ← Start Over
                 </button>
-                <button
-                  type="button"
-                  onClick={handleSaveTrip}
-                  className="flex items-center justify-center gap-2 rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-forest-dark"
-                >
-                  💾 Save This Trip
-                </button>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <Link
+                    to="/checklist"
+                    search={checklistSearchParams}
+                    className="flex items-center justify-center gap-2 rounded-full bg-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-amber/20 transition-all hover:bg-amber-dark hover:shadow-md"
+                  >
+                    🎒 Packing Checklist
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleSaveTrip}
+                    className="flex items-center justify-center gap-2 rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-forest-dark"
+                  >
+                    💾 Save This Trip
+                  </button>
+                </div>
               </div>
 
               {/* Summary card */}
@@ -434,6 +457,13 @@ function Plan() {
 
               {/* Bottom action buttons */}
               <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <Link
+                  to="/checklist"
+                  search={checklistSearchParams}
+                  className="flex items-center justify-center gap-2 rounded-full bg-amber px-6 py-3 text-sm font-semibold text-white shadow-md shadow-amber/20 transition-all hover:bg-amber-dark hover:shadow-lg"
+                >
+                  🎒 View Packing Checklist
+                </Link>
                 <button
                   type="button"
                   onClick={handleStartOver}

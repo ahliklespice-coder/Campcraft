@@ -19,3 +19,30 @@
     @apply bg-cream text-bark antialiased;
   }
 }
+
+/* ── Print styles ─────────────────────────────────────────────────────── */
+@media print {
+  nav,
+  footer,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:block {
+    display: block !important;
+  }
+
+  body {
+    background: white !important;
+    font-size: 12pt;
+  }
+
+  /* Ensure checkboxes are visible for pen-and-paper checking */
+  input[type="checkbox"] {
+    -webkit-appearance: auto !important;
+    appearance: auto !important;
+    display: inline-block !important;
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
