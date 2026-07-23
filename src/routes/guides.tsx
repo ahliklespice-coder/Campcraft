@@ -141,6 +141,36 @@ function GuidesHub() {
         );
       })}
 
+      {/* Starter Kit Upsell */}
+      <section className="mb-12">
+        <div className="overflow-hidden rounded-2xl border-2 border-forest/20 bg-gradient-to-br from-forest/5 to-stone-warm/50 p-6 sm:p-8">
+          <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-start">
+            <span className="flex-shrink-0 text-4xl">📚</span>
+            <div className="text-center sm:text-left">
+              <span className="inline-block rounded-full bg-forest/10 px-3 py-1 text-xs font-semibold text-forest-dark">
+                Digital Guide
+              </span>
+              <h3 className="mt-2 text-lg font-bold text-forest-dark">
+                Want offline access? Get The Complete Camping Starter Kit
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-bark-light">
+                All 7 guides in one downloadable PDF — perfect for reading at
+                the campsite when there's no cell service. $19, one-time purchase.
+              </p>
+              <div className="mt-4">
+                <a
+                  href="https://buy.stripe.com/14AcN7cytgRPfwbaLNfjG05"
+                  className="inline-flex items-center gap-2 rounded-full bg-forest px-6 py-2.5 text-sm font-semibold text-white no-underline shadow-md shadow-forest/20 transition-all hover:bg-forest-dark hover:shadow-lg"
+                >
+                  Buy Now — $19
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Bottom CTA */}
       <section className="mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-forest to-forest-dark p-8 text-center sm:p-10">
         <h2 className="text-2xl font-bold text-white sm:text-3xl">

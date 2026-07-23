@@ -21,6 +21,28 @@ export const Route = createFileRoute("/meals")({
   validateSearch: (search: Record<string, string | undefined>) => search,
 });
 
+// ── Meal plan usage tracker (localStorage) ──────────────────────────────────
+
+const MEAL_COUNT_KEY = "campcraft-meal-count";
+const MAX_FREE_MEAL_PLANS = 1;
+
+function getMealPlanCount(): number {
+  try {
+    return parseInt(localStorage.getItem(MEAL_COUNT_KEY) ?? "0", 10) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function incrementMealPlanCount(): number {
+  const current = getMealPlanCount();
+  const next = current + 1;
+  try {
+    localStorage.setItem(MEAL_COUNT_KEY, String(next));
+  } catch {}
+  return next;
+}
+
 // ── Main Component ───────────────────────────────────────────────────────────
 
 function MealsPage() {
@@ -226,6 +248,23 @@ function MealsPage() {
               >
                 ← Back to Plan
               </Link>
+            </div>
+
+            {/* Premium upgrade banner */}
+            <div className="mt-4 rounded-xl border border-amber/30 bg-amber/5 p-4 text-center">
+              <p className="text-sm font-medium text-bark">
+                🍳 Upgrade to Premium for unlimited meal plans
+              </p>
+              <p className="mt-1 text-xs text-bark-light">
+                Get weather-aware recipes, more dietary options, and unlimited
+                meal plan generations for every trip.
+              </p>
+              <a
+                href="/pricing"
+                className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber to-amber-light px-5 py-2 text-xs font-semibold text-white no-underline shadow-sm transition-all hover:from-amber-dark hover:to-amber"
+              >
+                Upgrade to Premium ✨
+              </a>
             </div>
           </div>
         </div>
@@ -692,10 +731,20 @@ function MealsWithoutParams() {
   const [tripStyle, setTripStyle] = useState<"relaxed" | "adventure" | "family" | "">("");
   const [totalDays, setTotalDays] = useState(2);
 
+  // Meal plan usage tracker
+  const [mealCount, setMealCount] = useState(0);
+
+  useEffect(() => {
+    setMealCount(getMealPlanCount());
+  }, []);
+
+  const mealsRemaining = Math.max(0, MAX_FREE_MEAL_PLANS - mealCount);
+  const isLocked = mealsRemaining <= 0 && mealCount > 0;
+
   const isFormValid = destination.trim().length > 0 && adults > 0 && totalDays >= 1;
 
   const handleGenerate = () => {
-    if (!isFormValid) return;
+    if (!isFormValid || isLocked) return;
     const params: MealPlanParams = {
       destination: destination.trim(),
       adults,
@@ -704,6 +753,10 @@ function MealsWithoutParams() {
       tripStyle: tripStyle || undefined,
       totalDays,
     };
+    // Increment meal plan usage
+    const newCount = incrementMealPlanCount();
+    setMealCount(newCount);
+
     const sp = new URLSearchParams();
     sp.set("destination", params.destination);
     sp.set("adults", String(params.adults));
@@ -745,6 +798,38 @@ function MealsWithoutParams() {
 
       <section className="px-4 py-10 sm:px-6 sm:py-14">
         <div className="mx-auto max-w-2xl">
+          {/* Premium locked prompt */}
+          {isLocked ? (
+            <div className="rounded-2xl border-2 border-amber/40 bg-white p-8 text-center shadow-lg sm:p-10">
+              <div className="mb-4 text-5xl">🔒</div>
+              <h2 className="text-2xl font-bold text-forest-dark">
+                You've used your free meal plan!
+              </h2>
+              <p className="mx-auto mt-3 max-w-md leading-relaxed text-bark-light">
+                You've already generated one meal plan — great taste! Upgrade to
+                Premium for unlimited meal plans, weather-aware recipes, and
+                grocery lists tailored to your trip.
+              </p>
+              <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                <a
+                  href="/pricing"
+                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber to-amber-light px-7 py-3 text-sm font-semibold text-white no-underline shadow-lg shadow-amber/20 transition-all hover:from-amber-dark hover:to-amber hover:shadow-xl"
+                >
+                  Upgrade to Premium ✨
+                </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    try { localStorage.removeItem(MEAL_COUNT_KEY); } catch {}
+                    setMealCount(0);
+                  }}
+                  className="text-sm font-medium text-bark-light underline underline-offset-2 transition-colors hover:text-bark"
+                >
+                  Reset counter (demo)
+                </button>
+              </div>
+            </div>
+          ) : (
           <div className="rounded-2xl border border-stone-warm/80 bg-white p-6 shadow-sm sm:p-8">
             {/* Destination */}
             <div className="mb-6">
@@ -859,6 +944,7 @@ function MealsWithoutParams() {
               Generate My Meal Plan ✨
             </button>
           </div>
+          )}
         </div>
       </section>
     </main>

@@ -10,6 +10,7 @@ const navLinks = [
   { to: "/checklist", label: "Packing List" },
   { to: "/meals", label: "Meal Planner" },
   { to: "/guides", label: "Guides" },
+  { to: "/pricing", label: "Pricing" },
   { to: "/about", label: "About" },
 ];
 
@@ -40,6 +41,12 @@ export default function Nav() {
               {link.label}
             </Link>
           ))}
+          <a
+            href="/pricing"
+            className="rounded-full border border-amber/50 bg-gradient-to-r from-amber to-amber-light px-4 py-1.5 text-sm font-semibold text-white no-underline shadow-sm transition-all hover:from-amber-dark hover:to-amber hover:shadow-md"
+          >
+            ✨ Upgrade
+          </a>
           <Link
             to="/plan"
             className="rounded-full bg-amber px-5 py-2 text-sm font-semibold text-white no-underline transition-colors hover:bg-amber-dark"
@@ -105,9 +112,16 @@ export default function Nav() {
                 {link.label}
               </Link>
             ))}
+            <a
+              href="/pricing"
+              className="mt-2 rounded-full border border-amber/50 bg-gradient-to-r from-amber to-amber-light px-5 py-2.5 text-center text-sm font-semibold text-white no-underline shadow-sm transition-all hover:from-amber-dark hover:to-amber"
+              onClick={() => setMenuOpen(false)}
+            >
+              ✨ Upgrade to Premium
+            </a>
             <Link
               to="/plan"
-              className="mt-2 rounded-full bg-amber px-5 py-2.5 text-center text-sm font-semibold text-white no-underline transition-colors hover:bg-amber-dark"
+              className="rounded-full bg-amber px-5 py-2.5 text-center text-sm font-semibold text-white no-underline transition-colors hover:bg-amber-dark"
               onClick={() => setMenuOpen(false)}
             >
               Get Started

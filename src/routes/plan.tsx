@@ -18,6 +18,28 @@ export const Route = createFileRoute("/plan")({
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
+const MAX_FREE_TRIPS = 3;
+const TRIP_COUNT_KEY = "campcraft-trip-count";
+
+function getTripCount(): number {
+  try {
+    return parseInt(localStorage.getItem(TRIP_COUNT_KEY) ?? "0", 10) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function incrementTripCount(): number {
+  const current = getTripCount();
+  const next = current + 1;
+  try {
+    localStorage.setItem(TRIP_COUNT_KEY, String(next));
+  } catch {
+    // localStorage unavailable
+  }
+  return next;
+}
+
 const EXPERIENCE_OPTIONS: { value: ExperienceLevel; label: string; emoji: string }[] = [
   { value: "first-time", label: "First time camper", emoji: "🌱" },
   { value: "been-a-few-times", label: "Been a few times", emoji: "🥾" },
@@ -42,11 +64,22 @@ function Plan() {
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel | "">("");
   const [tripStyle, setTripStyle] = useState<TripStyle | "">("");
 
+  // Trip counter (localStorage)
+  const [tripCount, setTripCount] = useState(0);
+
+  // Initialize trip count on mount
+  useEffect(() => {
+    setTripCount(getTripCount());
+  }, []);
+
   // UI state
   const [isGenerating, setIsGenerating] = useState(false);
   const [itinerary, setItinerary] = useState<Itinerary | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const itineraryRef = useRef<HTMLDivElement>(null);
+
+  const tripsRemaining = Math.max(0, MAX_FREE_TRIPS - tripCount);
+  const isPremiumLocked = tripsRemaining <= 0;
 
   // Auto-hide toast
   useEffect(() => {
@@ -72,7 +105,7 @@ function Plan() {
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      if (!isFormValid || dateError) return;
+      if (!isFormValid || dateError || isPremiumLocked) return;
 
       setIsGenerating(true);
 
@@ -92,13 +125,17 @@ function Plan() {
         setItinerary(result);
         setIsGenerating(false);
 
+        // Increment trip counter
+        const newCount = incrementTripCount();
+        setTripCount(newCount);
+
         // Scroll to results after a short delay for render
         setTimeout(() => {
           itineraryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 100);
       }, 1200);
     },
-    [destination, startDate, endDate, adults, children, experienceLevel, tripStyle, isFormValid, dateError],
+    [destination, startDate, endDate, adults, children, experienceLevel, tripStyle, isFormValid, dateError, isPremiumLocked],
   );
 
   const handleStartOver = useCallback(() => {
@@ -149,6 +186,22 @@ function Plan() {
             Tell us about your trip and we'll create a personalized day-by-day itinerary —
             no experience required.
           </p>
+          {/* Trip counter */}
+          <div className="mt-4 flex justify-center">
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium ${
+                isPremiumLocked
+                  ? "bg-red-500/20 text-red-200"
+                  : tripsRemaining <= 1
+                    ? "bg-amber/20 text-amber-200"
+                    : "bg-white/15 text-white/80"
+              }`}
+            >
+              {isPremiumLocked
+                ? "🔒 0 free trips remaining — upgrade to continue"
+                : `🎯 ${tripsRemaining} free ${tripsRemaining === 1 ? "trip" : "trips"} remaining`}
+            </span>
+          </div>
         </div>
       </section>
 
@@ -156,7 +209,7 @@ function Plan() {
       <section className="px-4 py-10 sm:px-6 sm:py-14">
         <div className="mx-auto max-w-2xl">
           {/* Form card */}
-          {!itinerary && (
+          {!itinerary && !isPremiumLocked && (
             <form
               onSubmit={handleSubmit}
               className="rounded-2xl border border-stone-warm/80 bg-white p-6 shadow-sm sm:p-8"
@@ -378,6 +431,41 @@ function Plan() {
             </form>
           )}
 
+          {/* Premium locked prompt */}
+          {!itinerary && isPremiumLocked && (
+            <div className="rounded-2xl border-2 border-amber/40 bg-white p-8 text-center shadow-lg sm:p-10">
+              <div className="mb-4 text-5xl">🔒</div>
+              <h2 className="text-2xl font-bold text-forest-dark">
+                You've used all 3 free trips!
+              </h2>
+              <p className="mx-auto mt-3 max-w-md leading-relaxed text-bark-light">
+                You've planned {tripCount} trips with CampCraft — awesome! To
+                keep the adventures going, upgrade to Premium for unlimited
+                trips, meal planning, weather-aware tips, and more.
+              </p>
+              <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                <a
+                  href="/pricing"
+                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber to-amber-light px-7 py-3 text-sm font-semibold text-white no-underline shadow-lg shadow-amber/20 transition-all hover:from-amber-dark hover:to-amber hover:shadow-xl"
+                >
+                  Upgrade to Premium ✨
+                </a>
+                <a
+                  href="/plan"
+                  className="text-sm font-medium text-bark-light underline underline-offset-2 transition-colors hover:text-bark"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // Reset trip count for demo purposes
+                    try { localStorage.removeItem(TRIP_COUNT_KEY); } catch {}
+                    setTripCount(0);
+                  }}
+                >
+                  Reset counter (demo)
+                </a>
+              </div>
+            </div>
+          )}
+
           {/* Loading overlay for generating state on re-submit */}
           {isGenerating && itinerary && (
             <div className="flex flex-col items-center justify-center gap-4 py-20">
@@ -488,6 +576,27 @@ function Plan() {
                 >
                   ← Start Over & Plan a New Trip
                 </button>
+              </div>
+
+              {/* Premium upgrade banner */}
+              <div className="mt-8 rounded-xl border border-amber/30 bg-gradient-to-r from-amber/5 to-transparent p-5 text-center sm:text-left">
+                <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+                  <span className="text-3xl">✨</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-bark">
+                      Love this itinerary? Upgrade for unlimited trips + meal planning
+                    </p>
+                    <p className="mt-1 text-xs text-bark-light">
+                      Premium unlocks unlimited trip plans, full meal planning with grocery lists, weather-aware tips, and priority access to new features.
+                    </p>
+                    <a
+                      href="/pricing"
+                      className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber to-amber-light px-5 py-2 text-xs font-semibold text-white no-underline shadow-sm transition-all hover:from-amber-dark hover:to-amber"
+                    >
+                      See Premium Plans →
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           )}

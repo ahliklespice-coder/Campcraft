@@ -123,6 +123,45 @@ function Home() {
         </div>
       </section>
 
+      {/* Go Premium Section */}
+      <section className="bg-gradient-to-b from-cream to-stone-warm px-4 py-16 sm:px-6 sm:py-22">
+        <div className="mx-auto max-w-3xl">
+          <div className="overflow-hidden rounded-2xl border-2 border-amber/40 bg-white p-8 shadow-lg sm:p-10">
+            <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
+              <div className="flex-shrink-0 text-5xl sm:text-6xl">✨</div>
+              <div className="text-center sm:text-left">
+                <span className="inline-block rounded-full bg-amber/15 px-3 py-1 text-xs font-semibold text-amber-dark">
+                  Premium
+                </span>
+                <h3 className="mt-3 text-2xl font-bold text-forest-dark sm:text-3xl">
+                  Go Premium & Unlock the Full Experience
+                </h3>
+                <p className="mt-3 leading-relaxed text-bark-light">
+                  Get unlimited trip plans, full meal planning with grocery
+                  lists, weather-aware packing tips, and priority access to new
+                  features. Start at just $8/month — cancel anytime.
+                </p>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <a
+                    href="/pricing"
+                    className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber to-amber-light px-6 py-2.5 text-sm font-semibold text-white no-underline shadow-md transition-all hover:from-amber-dark hover:to-amber hover:shadow-lg"
+                  >
+                    See Plans
+                    <span aria-hidden="true">✨</span>
+                  </a>
+                  <Link
+                    to="/plan"
+                    className="inline-flex items-center gap-2 rounded-full border border-stone-warm bg-white px-6 py-2.5 text-sm font-medium text-bark no-underline transition-colors hover:bg-stone-warm"
+                  >
+                    Try Free First
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Discover CTA Card */}
       <section className="bg-cream px-4 py-12 sm:px-6">
         <div className="mx-auto max-w-3xl">

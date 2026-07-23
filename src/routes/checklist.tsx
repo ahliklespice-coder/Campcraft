@@ -185,6 +185,23 @@ function ChecklistPage() {
                 Reset All
               </button>
             </div>
+
+            {/* Premium upgrade CTA */}
+            <div className="mt-4 rounded-xl border border-amber/30 bg-amber/5 p-4 text-center">
+              <p className="text-sm font-medium text-bark">
+                🌦️ Want weather-aware packing tips?
+              </p>
+              <p className="mt-1 text-xs text-bark-light">
+                Premium adjusts your checklist based on real-time weather
+                conditions so you never pack wrong.
+              </p>
+              <a
+                href="/pricing"
+                className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber to-amber-light px-5 py-2 text-xs font-semibold text-white no-underline shadow-sm transition-all hover:from-amber-dark hover:to-amber"
+              >
+                Upgrade to Premium ✨
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -317,6 +334,17 @@ function ChecklistItemRow({
           }`}
         >
           {item.name}
+          {item.affiliateUrl && !checked && (
+            <a
+              href={item.affiliateUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-2 inline-flex items-center gap-0.5 text-[11px] font-medium text-amber no-underline transition-colors hover:text-amber-dark print:hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              🛒 Shop →
+            </a>
+          )}
           {item.essential && !checked && (
             <span className="ml-1.5 inline-flex items-center rounded-full bg-amber/15 px-2 py-0.5 text-[10px] font-semibold text-amber-dark">
               essential

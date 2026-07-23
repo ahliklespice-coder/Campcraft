@@ -77,6 +77,37 @@ export function GuideLayout({
         </div>
       )}
 
+      {/* Starter Kit Upsell */}
+      <div className="mt-12 rounded-2xl border-2 border-forest/20 bg-gradient-to-br from-forest/5 to-stone-warm/50 p-6 sm:p-8">
+        <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-start">
+          <span className="flex-shrink-0 text-4xl">📚</span>
+          <div className="text-center sm:text-left">
+            <h3 className="text-lg font-bold text-forest-dark">
+              Want offline access? Get The Complete Camping Starter Kit
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-bark-light">
+              All 7 guides in one downloadable, print-friendly PDF —
+              perfect for reading at the campsite when there's no cell service.
+              $19, one-time purchase, yours forever.
+            </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-3 sm:justify-start">
+              <a
+                href="https://buy.stripe.com/14AcN7cytgRPfwbaLNfjG05"
+                className="inline-flex items-center gap-2 rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-white no-underline shadow-md shadow-forest/20 transition-all hover:bg-forest-dark hover:shadow-lg"
+              >
+                Get the Full Guide — $19
+              </a>
+              <Link
+                to="/guides"
+                className="inline-flex items-center gap-2 rounded-full border border-stone-warm bg-white px-5 py-2.5 text-sm font-medium text-bark no-underline transition-colors hover:bg-stone-warm"
+              >
+                Browse All Guides
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Related Guides */}
       <div className="mt-12 border-t border-stone-warm pt-8">
         <h2 className="mb-5 text-xl font-bold text-forest-dark">

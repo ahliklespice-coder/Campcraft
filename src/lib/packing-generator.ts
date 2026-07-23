@@ -20,7 +20,21 @@ export interface PackingItem {
   requiresKids?: boolean;
   minDays?: number;
   forStyle?: TripStyle | TripStyle[];
+  affiliateUrl?: string;
 }
+
+// ── Affiliate link registry ──────────────────────────────────────────────
+
+const AFFILIATE_LINKS: Record<string, string> = {
+  tent: "https://www.rei.com/c/tents?ir=category%3Atents",
+  "sleeping-bag": "https://www.rei.com/c/sleeping-bags?ir=category%3Asleeping-bags",
+  stove: "https://www.rei.com/c/camp-stoves?ir=category%3Acamp-stoves",
+  headlamp: "https://www.rei.com/c/headlamps?ir=category%3Aheadlamps",
+  "water-filter": "https://www.rei.com/c/water-treatment?ir=category%3Awater-treatment",
+  "first-aid": "https://www.rei.com/c/first-aid-kits?ir=category%3Afirst-aid-kits",
+  "sleeping-pad": "https://www.rei.com/c/sleeping-pads?ir=category%3Asleeping-pads",
+  "camp-chair": "https://www.rei.com/c/camp-chairs?ir=category%3Acamp-chairs",
+};
 
 export type ChecklistCategory =
   | "shelter"
@@ -740,14 +754,20 @@ export function generateChecklist(params: TripParams): PackingChecklist {
     return true;
   });
 
+  // Attach affiliate links
+  const itemsWithAffiliates = filtered.map((item) => ({
+    ...item,
+    affiliateUrl: AFFILIATE_LINKS[item.id] || item.affiliateUrl,
+  }));
+
   // Group by category
   const categories = new Map<ChecklistCategory, PackingItem[]>();
   for (const cat of CATEGORIES) {
-    const catItems = filtered.filter((item) => item.category === cat.key);
+    const catItems = itemsWithAffiliates.filter((item) => item.category === cat.key);
     categories.set(cat.key, catItems);
   }
 
-  return { params, items: filtered, categories };
+  return { params, items: itemsWithAffiliates, categories };
 }
 
 /**
