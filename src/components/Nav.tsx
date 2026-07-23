@@ -2,6 +2,7 @@
 
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { useAuth } from "~/lib/auth-context";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -16,6 +17,12 @@ const navLinks = [
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, isAuthenticated, isPremium, isLoading, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    setMenuOpen(false);
+  };
 
   return (
     <nav className="sticky top-0 z-50 border-b border-stone-warm/80 bg-cream/95 backdrop-blur-sm">
@@ -30,7 +37,7 @@ export default function Nav() {
         </Link>
 
         {/* Desktop nav links */}
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="hidden items-center gap-4 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.to}
@@ -41,18 +48,53 @@ export default function Nav() {
               {link.label}
             </Link>
           ))}
-          <a
-            href="/pricing"
-            className="rounded-full border border-amber/50 bg-gradient-to-r from-amber to-amber-light px-4 py-1.5 text-sm font-semibold text-white no-underline shadow-sm transition-all hover:from-amber-dark hover:to-amber hover:shadow-md"
-          >
-            ✨ Upgrade
-          </a>
-          <Link
-            to="/plan"
-            className="rounded-full bg-amber px-5 py-2 text-sm font-semibold text-white no-underline transition-colors hover:bg-amber-dark"
-          >
-            Get Started
-          </Link>
+
+          {/* Auth actions */}
+          {isLoading ? null : isAuthenticated ? (
+            <>
+              {isPremium ? (
+                <span className="rounded-full bg-gradient-to-r from-amber to-amber-light px-4 py-1.5 text-sm font-semibold text-white shadow-sm">
+                  ✨ Premium
+                </span>
+              ) : (
+                <a
+                  href="/pricing"
+                  className="rounded-full border border-amber/50 bg-gradient-to-r from-amber to-amber-light px-4 py-1.5 text-sm font-semibold text-white no-underline shadow-sm transition-all hover:from-amber-dark hover:to-amber hover:shadow-md"
+                >
+                  ✨ Upgrade
+                </a>
+              )}
+              <Link
+                to="/account"
+                className="text-sm font-medium text-bark-light no-underline transition-colors hover:text-forest"
+                activeProps={{ className: "text-forest font-semibold" }}
+              >
+                {user?.name ?? "Account"}
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="text-sm font-medium text-bark-light transition-colors hover:text-red-600"
+              >
+                Log Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-sm font-medium text-bark-light no-underline transition-colors hover:text-forest"
+              >
+                Log In
+              </Link>
+              <Link
+                to="/signup"
+                className="rounded-full bg-amber px-5 py-2 text-sm font-semibold text-white no-underline transition-colors hover:bg-amber-dark"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -112,20 +154,60 @@ export default function Nav() {
                 {link.label}
               </Link>
             ))}
-            <a
-              href="/pricing"
-              className="mt-2 rounded-full border border-amber/50 bg-gradient-to-r from-amber to-amber-light px-5 py-2.5 text-center text-sm font-semibold text-white no-underline shadow-sm transition-all hover:from-amber-dark hover:to-amber"
-              onClick={() => setMenuOpen(false)}
-            >
-              ✨ Upgrade to Premium
-            </a>
-            <Link
-              to="/plan"
-              className="rounded-full bg-amber px-5 py-2.5 text-center text-sm font-semibold text-white no-underline transition-colors hover:bg-amber-dark"
-              onClick={() => setMenuOpen(false)}
-            >
-              Get Started
-            </Link>
+
+            {/* Divider */}
+            <div className="my-1 border-t border-stone-warm/60" />
+
+            {/* Mobile auth */}
+            {isLoading ? null : isAuthenticated ? (
+              <>
+                {isPremium ? (
+                  <span className="rounded-full bg-gradient-to-r from-amber to-amber-light px-4 py-2 text-center text-sm font-semibold text-white shadow-sm">
+                    ✨ Premium Member
+                  </span>
+                ) : (
+                  <a
+                    href="/pricing"
+                    className="rounded-full bg-gradient-to-r from-amber to-amber-light px-5 py-2.5 text-center text-sm font-semibold text-white no-underline shadow-sm"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    ✨ Upgrade to Premium
+                  </a>
+                )}
+                <Link
+                  to="/account"
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-bark-light no-underline transition-colors hover:bg-stone-warm hover:text-forest"
+                  activeProps={{ className: "bg-stone-warm text-forest font-semibold" }}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {user?.name ?? "My Account"}
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+                >
+                  🚪 Log Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-bark-light no-underline transition-colors hover:bg-stone-warm hover:text-forest"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Log In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="rounded-full bg-amber px-5 py-2.5 text-center text-sm font-semibold text-white no-underline transition-colors hover:bg-amber-dark"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

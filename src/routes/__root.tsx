@@ -7,6 +7,7 @@ import {
 import type { ReactNode } from "react";
 
 import Nav from "~/components/Nav";
+import { AuthProvider } from "~/lib/auth-context";
 import appCss from "~/styles/app.css?url";
 
 export const Route = createRootRoute({
@@ -38,8 +39,10 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
-      <Nav />
-      <Outlet />
+      <AuthProvider>
+        <Nav />
+        <Outlet />
+      </AuthProvider>
     </RootDocument>
   );
 }

@@ -11,34 +11,12 @@ import {
   type ExperienceLevel,
   type TripStyle,
 } from "~/lib/itinerary-generator";
+import { useAuth } from "~/lib/auth-context";
+import { checkPremium, saveTrip as saveTripToDB } from "~/lib/auth";
 
 export const Route = createFileRoute("/plan")({
   component: Plan,
 });
-
-// ── Constants ──────────────────────────────────────────────────────────────
-
-const MAX_FREE_TRIPS = 3;
-const TRIP_COUNT_KEY = "campcraft-trip-count";
-
-function getTripCount(): number {
-  try {
-    return parseInt(localStorage.getItem(TRIP_COUNT_KEY) ?? "0", 10) || 0;
-  } catch {
-    return 0;
-  }
-}
-
-function incrementTripCount(): number {
-  const current = getTripCount();
-  const next = current + 1;
-  try {
-    localStorage.setItem(TRIP_COUNT_KEY, String(next));
-  } catch {
-    // localStorage unavailable
-  }
-  return next;
-}
 
 const EXPERIENCE_OPTIONS: { value: ExperienceLevel; label: string; emoji: string }[] = [
   { value: "first-time", label: "First time camper", emoji: "🌱" },
@@ -55,6 +33,8 @@ const STYLE_OPTIONS: { value: TripStyle; label: string; emoji: string }[] = [
 // ── Component ──────────────────────────────────────────────────────────────
 
 function Plan() {
+  const { isAuthenticated, isPremium } = useAuth();
+
   // Form state
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -64,12 +44,32 @@ function Plan() {
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel | "">("");
   const [tripStyle, setTripStyle] = useState<TripStyle | "">("");
 
-  // Trip counter (localStorage)
-  const [tripCount, setTripCount] = useState(0);
+  // Premium state from server
+  const [tripsRemaining, setTripsRemaining] = useState(3);
+  const [premiumLoading, setPremiumLoading] = useState(true);
 
-  // Initialize trip count on mount
+  // Load premium state
   useEffect(() => {
-    setTripCount(getTripCount());
+    const load = async () => {
+      try {
+        const result = await checkPremium();
+        setTripsRemaining(
+          result.isPremium ? Infinity : result.tripsRemaining,
+        );
+      } catch {
+        // DB not connected yet — fall back to localStorage
+        const stored = parseInt(
+          (typeof localStorage !== "undefined"
+            ? localStorage.getItem("campcraft-trip-count")
+            : null) ?? "0",
+          10,
+        ) || 0;
+        setTripsRemaining(Math.max(0, 3 - stored));
+      } finally {
+        setPremiumLoading(false);
+      }
+    };
+    load();
   }, []);
 
   // UI state
@@ -77,9 +77,10 @@ function Plan() {
   const [itinerary, setItinerary] = useState<Itinerary | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const itineraryRef = useRef<HTMLDivElement>(null);
+  const [savingTrip, setSavingTrip] = useState(false);
 
-  const tripsRemaining = Math.max(0, MAX_FREE_TRIPS - tripCount);
-  const isPremiumLocked = tripsRemaining <= 0;
+  const isPremiumLocked = !premiumLoading && !isPremium && tripsRemaining <= 0;
+  const showUpgradePrompt = isPremiumLocked && !isAuthenticated;
 
   // Auto-hide toast
   useEffect(() => {
@@ -125,9 +126,10 @@ function Plan() {
         setItinerary(result);
         setIsGenerating(false);
 
-        // Increment trip counter
-        const newCount = incrementTripCount();
-        setTripCount(newCount);
+        // Decrement local remaining count (optimistic; DB check on save)
+        if (!isPremium && tripsRemaining > 0 && tripsRemaining !== Infinity) {
+          setTripsRemaining((prev) => (prev === Infinity ? prev : prev - 1));
+        }
 
         // Scroll to results after a short delay for render
         setTimeout(() => {
@@ -143,9 +145,34 @@ function Plan() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const handleSaveTrip = useCallback(() => {
-    setToast("✨ Trip saved! (Persistence coming soon — your itinerary is safe on this page for now.)");
-  }, []);
+  const handleSaveTrip = useCallback(async () => {
+    if (!itinerary) return;
+    setSavingTrip(true);
+    try {
+      await saveTripToDB({
+        data: {
+          destination: itinerary.destination,
+          startDate,
+          endDate,
+          adults,
+          children,
+          experienceLevel: itinerary.experienceLevel,
+          tripStyle: itinerary.tripStyle,
+          itinerary,
+        },
+      });
+      setToast("✨ Trip saved! View it anytime on your Account page.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Save failed";
+      if (message.includes("Not authenticated")) {
+        setToast("🔐 Sign up to save your trips!");
+      } else {
+        setToast(`Couldn't save: ${message}`);
+      }
+    } finally {
+      setSavingTrip(false);
+    }
+  }, [itinerary, startDate, endDate, adults, children]);
 
   // Build checklist search params from the generated itinerary
   const checklistSearchParams = useMemo((): Record<string, string> | undefined => {
@@ -192,14 +219,16 @@ function Plan() {
               className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium ${
                 isPremiumLocked
                   ? "bg-red-500/20 text-red-200"
-                  : tripsRemaining <= 1
+                  : tripsRemaining <= 1 && tripsRemaining !== Infinity
                     ? "bg-amber/20 text-amber-200"
                     : "bg-white/15 text-white/80"
               }`}
             >
-              {isPremiumLocked
-                ? "🔒 0 free trips remaining — upgrade to continue"
-                : `🎯 ${tripsRemaining} free ${tripsRemaining === 1 ? "trip" : "trips"} remaining`}
+              {isPremium
+                ? "✨ Unlimited trips (Premium)"
+                : isPremiumLocked
+                  ? "🔒 0 free trips remaining — upgrade to continue"
+                  : `🎯 ${tripsRemaining === Infinity ? "unlimited" : tripsRemaining} free ${tripsRemaining === 1 ? "trip" : "trips"} remaining`}
             </span>
           </div>
         </div>
@@ -436,32 +465,43 @@ function Plan() {
             <div className="rounded-2xl border-2 border-amber/40 bg-white p-8 text-center shadow-lg sm:p-10">
               <div className="mb-4 text-5xl">🔒</div>
               <h2 className="text-2xl font-bold text-forest-dark">
-                You've used all 3 free trips!
+                {isAuthenticated
+                  ? "You've used all 3 free trips!"
+                  : "Sign up to plan more trips!"}
               </h2>
               <p className="mx-auto mt-3 max-w-md leading-relaxed text-bark-light">
-                You've planned {tripCount} trips with CampCraft — awesome! To
-                keep the adventures going, upgrade to Premium for unlimited
-                trips, meal planning, weather-aware tips, and more.
+                {isAuthenticated
+                  ? "You've planned 3 trips with CampCraft — awesome! To keep the adventures going, upgrade to Premium for unlimited trips, meal planning, weather-aware tips, and more."
+                  : "Create a free account to save your trips and get 3 free plans. Or go Premium for unlimited adventures!"}
               </p>
               <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                {!isAuthenticated && (
+                  <Link
+                    to="/signup"
+                    className="inline-flex items-center gap-2 rounded-full bg-forest px-7 py-3 text-sm font-semibold text-white no-underline shadow-lg shadow-forest/20 transition-all hover:bg-forest-dark hover:shadow-xl"
+                  >
+                    Create Free Account 🌲
+                  </Link>
+                )}
                 <a
                   href="/pricing"
                   className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber to-amber-light px-7 py-3 text-sm font-semibold text-white no-underline shadow-lg shadow-amber/20 transition-all hover:from-amber-dark hover:to-amber hover:shadow-xl"
                 >
                   Upgrade to Premium ✨
                 </a>
-                <a
-                  href="/plan"
-                  className="text-sm font-medium text-bark-light underline underline-offset-2 transition-colors hover:text-bark"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    // Reset trip count for demo purposes
-                    try { localStorage.removeItem(TRIP_COUNT_KEY); } catch {}
-                    setTripCount(0);
-                  }}
-                >
-                  Reset counter (demo)
-                </a>
+                {isAuthenticated && (
+                  <a
+                    href="/plan"
+                    className="text-sm font-medium text-bark-light underline underline-offset-2 transition-colors hover:text-bark"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      try { localStorage.removeItem("campcraft-trip-count"); } catch {}
+                      setTripsRemaining(3);
+                    }}
+                  >
+                    Reset counter (demo)
+                  </a>
+                )}
               </div>
             </div>
           )}
@@ -506,9 +546,17 @@ function Plan() {
                   <button
                     type="button"
                     onClick={handleSaveTrip}
-                    className="flex items-center justify-center gap-2 rounded-full border border-stone-warm bg-white px-5 py-2.5 text-sm font-semibold text-bark transition-colors hover:bg-stone-warm"
+                    disabled={savingTrip}
+                    className="flex items-center justify-center gap-2 rounded-full border border-stone-warm bg-white px-5 py-2.5 text-sm font-semibold text-bark transition-colors hover:bg-stone-warm disabled:opacity-50"
                   >
-                    💾 Save This Trip
+                    {savingTrip ? (
+                      <>
+                        <Spinner />
+                        Saving...
+                      </>
+                    ) : (
+                      "💾 Save This Trip"
+                    )}
                   </button>
                 </div>
               </div>
