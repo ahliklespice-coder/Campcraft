@@ -20,6 +20,44 @@
   }
 }
 
+/* ── Guide Content Typography ──────────────────────────────────────────── */
+.guide-content h2 {
+  @apply mb-4 mt-10 text-2xl font-bold text-forest-dark;
+}
+.guide-content h3 {
+  @apply mb-3 mt-8 text-lg font-semibold text-bark;
+}
+.guide-content p {
+  @apply mb-4 leading-relaxed;
+}
+.guide-content ul,
+.guide-content ol {
+  @apply mb-6 space-y-2 pl-5;
+}
+.guide-content ul {
+  @apply list-disc;
+}
+.guide-content ol {
+  @apply list-decimal;
+}
+.guide-content li {
+  @apply leading-relaxed;
+}
+.guide-content strong {
+  @apply font-semibold text-forest-dark;
+}
+
+/* ── Pro Tip Callout ───────────────────────────────────────────────────── */
+.pro-tip {
+  @apply my-6 rounded-xl border-l-4 border-amber bg-amber/10 p-5;
+}
+.pro-tip .pro-tip-label {
+  @apply mb-1.5 text-sm font-semibold tracking-wide text-amber-dark uppercase;
+}
+.pro-tip p {
+  @apply m-0;
+}
+
 /* ── Print styles ─────────────────────────────────────────────────────── */
 @media print {
   nav,
@@ -37,7 +75,6 @@
     font-size: 12pt;
   }
 
-  /* Ensure checkboxes are visible for pen-and-paper checking */
   input[type="checkbox"] {
     -webkit-appearance: auto !important;
     appearance: auto !important;
